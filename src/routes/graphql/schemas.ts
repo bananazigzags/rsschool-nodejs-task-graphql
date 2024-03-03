@@ -1,5 +1,5 @@
 import { Static, Type } from '@fastify/type-provider-typebox';
-import { GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
 import { PrismaClient } from '@prisma/client';
 import {
   CreatePostInput,
@@ -123,6 +123,14 @@ const rootMutation = new GraphQLObjectType({
         return createdUser;
       },
     },
+    deleteUser: {
+      type: GraphQLString,
+      args: { id: { type: UUIDType } },
+      resolve: async (_, { id }: { id: string }, context: PrismaClient) => {
+        await context.user.delete({ where: { id } });
+        return `User ${id} deleted`;
+      },
+    },
     createPost: {
       type: Post,
       args: { dto: { type: CreatePostInput } },
@@ -137,6 +145,14 @@ const rootMutation = new GraphQLObjectType({
         return createdUser;
       },
     },
+    deletePost: {
+      type: GraphQLString,
+      args: { id: { type: UUIDType } },
+      resolve: async (_, { id }: { id: string }, context: PrismaClient) => {
+        await context.post.delete({ where: { id } });
+        return `Post ${id} deleted`;
+      },
+    },
     createProfile: {
       type: Post,
       args: { dto: { type: CreateProfileInput } },
@@ -149,6 +165,14 @@ const rootMutation = new GraphQLObjectType({
           data: dto,
         });
         return createdUser;
+      },
+    },
+    deleteProfile: {
+      type: GraphQLString,
+      args: { id: { type: UUIDType } },
+      resolve: async (_, { id }: { id: string }, context: PrismaClient) => {
+        await context.profile.delete({ where: { id } });
+        return `Profile ${id} deleted`;
       },
     },
   },
