@@ -10,7 +10,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import { UUIDType } from './types/uuid.js';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SubscribersOnAuthors } from '@prisma/client';
 import { userSchema } from '../users/schemas.js';
 import { Static } from '@sinclair/typebox';
 import { profileSchema } from '../profiles/schemas.js';
@@ -72,7 +72,13 @@ export const Profile = new GraphQLObjectType({
 export const Profiles = new GraphQLList(Profile);
 
 export const User: GraphQLObjectType<
-  { id: string; name: string; balance: number },
+  {
+    id: string;
+    name: string;
+    balance: number;
+    userSubscribedTo?: Array<SubscribersOnAuthors>;
+    subscribedToUser?: Array<SubscribersOnAuthors>;
+  },
   PrismaClient
 > = new GraphQLObjectType({
   name: 'User',

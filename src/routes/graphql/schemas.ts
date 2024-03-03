@@ -223,6 +223,47 @@ const rootMutation = new GraphQLObjectType({
         return `Profile ${id} deleted`;
       },
     },
+    subscribeTo: {
+      type: User,
+      args: { userId: { type: UUIDType }, authorId: { type: UUIDType } },
+      resolve: async (
+        _,
+        { userId, authorId }: { userId: string; authorId: string },
+        context: PrismaClient,
+      ) => {
+        const subscribedToUser = await context.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            userSubscribedTo: {
+              create: {
+                authorId,
+              },
+            },
+          },
+        });
+        return subscribedToUser;
+      },
+    },
+    unsubscribeFrom: {
+      type: GraphQLString,
+      args: { userId: { type: UUIDType }, authorId: { type: UUIDType } },
+      resolve: async (
+        _,
+        { userId, authorId }: { userId: string; authorId: string },
+        context: PrismaClient,
+      ) => {
+        await context.subscribersOnAuthors.delete({
+          where: {
+            subscriberId_authorId: {
+              subscriberId: userId,
+              authorId: authorId,
+            },
+          },
+        });
+      },
+    },
   },
 });
 
