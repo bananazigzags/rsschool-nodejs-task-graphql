@@ -21,9 +21,9 @@ export const MemberIdType = new GraphQLEnumType({
 export const MemberType = new GraphQLObjectType({
   name: 'MemberType',
   fields: {
-    id: { type: MemberIdType },
-    discount: { type: GraphQLFloat },
-    postsLimitPerMonth: { type: GraphQLInt },
+    id: { type: new GraphQLNonNull(MemberIdType) },
+    discount: { type: new GraphQLNonNull(GraphQLFloat) },
+    postsLimitPerMonth: { type: new GraphQLNonNull(GraphQLInt) },
   },
 });
 
@@ -33,9 +33,9 @@ export const Post = new GraphQLObjectType({
   name: 'Post',
   fields: {
     id: { type: new GraphQLNonNull(UUIDType) },
-    title: { type: GraphQLString },
-    content: { type: GraphQLString },
-    authodId: { type: GraphQLString },
+    title: { type: new GraphQLNonNull(GraphQLString) },
+    content: { type: new GraphQLNonNull(GraphQLString) },
+    authodId: { type: new GraphQLNonNull(GraphQLString) },
   },
 });
 
@@ -45,8 +45,8 @@ export const User = new GraphQLObjectType({
   name: 'User',
   fields: {
     id: { type: new GraphQLNonNull(UUIDType) },
-    name: { type: GraphQLString },
-    balance: { type: GraphQLFloat },
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
   },
 });
 
@@ -56,8 +56,8 @@ export const Profile = new GraphQLObjectType({
   name: 'Profile',
   fields: {
     id: { type: new GraphQLNonNull(UUIDType) },
-    isMale: { type: GraphQLBoolean },
-    yearOfBirth: { type: GraphQLInt },
+    isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
+    yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
     userId: { type: new GraphQLNonNull(UUIDType) },
     memberTypeId: { type: new GraphQLNonNull(UUIDType) },
   },
