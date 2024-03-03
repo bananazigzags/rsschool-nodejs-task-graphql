@@ -2,6 +2,9 @@ import { Static, Type } from '@fastify/type-provider-typebox';
 import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql';
 import { PrismaClient } from '@prisma/client';
 import {
+  ChangePostInput,
+  ChangeProfileInput,
+  ChangeUserInput,
   CreatePostInput,
   CreateProfileInput,
   CreateUserInput,
@@ -123,6 +126,21 @@ const rootMutation = new GraphQLObjectType({
         return createdUser;
       },
     },
+    changeUser: {
+      type: User,
+      args: { id: { type: UUIDType }, dto: { type: ChangeUserInput } },
+      resolve: async (
+        _,
+        { dto, id }: { dto: Static<(typeof createUserSchema)['body']>; id: string },
+        context: PrismaClient,
+      ) => {
+        const updatedUser = await context.user.update({
+          where: { id },
+          data: dto,
+        });
+        return updatedUser;
+      },
+    },
     deleteUser: {
       type: GraphQLString,
       args: { id: { type: UUIDType } },
@@ -145,6 +163,21 @@ const rootMutation = new GraphQLObjectType({
         return createdUser;
       },
     },
+    changePost: {
+      type: Post,
+      args: { id: { type: UUIDType }, dto: { type: ChangePostInput } },
+      resolve: async (
+        _,
+        { dto, id }: { dto: Static<(typeof createPostSchema)['body']>; id: string },
+        context: PrismaClient,
+      ) => {
+        const updatedUser = await context.post.update({
+          where: { id },
+          data: dto,
+        });
+        return updatedUser;
+      },
+    },
     deletePost: {
       type: GraphQLString,
       args: { id: { type: UUIDType } },
@@ -165,6 +198,21 @@ const rootMutation = new GraphQLObjectType({
           data: dto,
         });
         return createdUser;
+      },
+    },
+    changeProfile: {
+      type: Profile,
+      args: { id: { type: UUIDType }, dto: { type: ChangeProfileInput } },
+      resolve: async (
+        _,
+        { dto, id }: { dto: Static<(typeof createProfileSchema)['body']>; id: string },
+        context: PrismaClient,
+      ) => {
+        const updatedProfile = await context.profile.update({
+          where: { id },
+          data: dto,
+        });
+        return updatedProfile;
       },
     },
     deleteProfile: {
