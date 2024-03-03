@@ -90,6 +90,34 @@ export const User = new GraphQLObjectType({
         });
       },
     },
+    userSubscribedTo: {
+      type: new GraphQLList(User),
+      resolve: async ({ id }: { id: UUID }, __, context: PrismaClient) => {
+        return context.user.findMany({
+          where: {
+            subscribedToUser: {
+              some: {
+                subscriberId: id,
+              },
+            },
+          },
+        });
+      },
+    },
+    subscribedToUser: {
+      type: new GraphQLList(User),
+      resolve: async ({ id }: { id: UUID }, __, context: PrismaClient) => {
+        return context.user.findMany({
+          where: {
+            userSubscribedTo: {
+              some: {
+                authorId: id,
+              },
+            },
+          },
+        });
+      },
+    },
   }),
 });
 
