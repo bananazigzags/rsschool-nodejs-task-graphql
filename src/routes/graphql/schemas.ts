@@ -13,7 +13,6 @@ import {
   Users,
 } from './types.js';
 import { MemberTypeId } from '../member-types/schemas.js';
-import { UUID } from 'crypto';
 import { UUIDType } from './types/uuid.js';
 
 export const gqlResponseSchema = Type.Partial(
@@ -62,7 +61,7 @@ const rootQuery = new GraphQLObjectType({
     post: {
       type: Post,
       args: { id: { type: UUIDType } },
-      resolve: async (_, { id }: { id: UUID }, context: PrismaClient) => {
+      resolve: async (_, { id }: { id: string }, context: PrismaClient) => {
         return context.post.findUnique({
           where: { id },
         });
@@ -77,7 +76,7 @@ const rootQuery = new GraphQLObjectType({
     user: {
       type: User,
       args: { id: { type: UUIDType } },
-      resolve: async (_, { id }: { id: UUID }, context: PrismaClient) => {
+      resolve: async (_, { id }: { id: string }, context: PrismaClient) => {
         return context.user.findUnique({
           where: { id },
         });
@@ -92,7 +91,7 @@ const rootQuery = new GraphQLObjectType({
     profile: {
       type: Profile,
       args: { id: { type: UUIDType } },
-      resolve: async (_, { id }: { id: UUID }, context: PrismaClient) => {
+      resolve: async (_, { id }: { id: string }, context: PrismaClient) => {
         return context.profile.findUnique({
           where: { id },
         });
