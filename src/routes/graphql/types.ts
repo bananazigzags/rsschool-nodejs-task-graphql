@@ -9,6 +9,8 @@ import {
   GraphQLString,
 } from 'graphql';
 import { UUIDType } from './types/uuid.js';
+import { PrismaClient } from '@prisma/client';
+import { UUID } from 'crypto';
 
 export const MemberIdType = new GraphQLEnumType({
   name: 'MemberTypeId',
@@ -48,7 +50,19 @@ export const Profile = new GraphQLObjectType({
     isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
     yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
     userId: { type: new GraphQLNonNull(UUIDType) },
-    memberTypeId: { type: new GraphQLNonNull(UUIDType) },
+    memberTypeId: { type: new GraphQLNonNull(MemberIdType) },
+    memberType: {
+      type: MemberType,
+      resolve: async (
+        { memberTypeId }: { memberTypeId: UUID },
+        __,
+        context: PrismaClient,
+      ) => {
+        return context.memberType.findUnique({
+          where: { id: memberTypeId },
+        });
+      },
+    },
   },
 });
 
@@ -56,12 +70,27 @@ export const Profiles = new GraphQLList(Profile);
 
 export const User = new GraphQLObjectType({
   name: 'User',
-  fields: {
+  fields: () => ({
     id: { type: new GraphQLNonNull(UUIDType) },
     name: { type: new GraphQLNonNull(GraphQLString) },
     balance: { type: new GraphQLNonNull(GraphQLFloat) },
-    profile: { type: Profile },
-  },
+    profile: {
+      type: Profile,
+      resolve: async ({ id }: { id: UUID }, __, context: PrismaClient) => {
+        return context.profile.findUnique({
+          where: { userId: id },
+        });
+      },
+    },
+    posts: {
+      type: Posts,
+      resolve: async ({ id }: { id: UUID }, __, context: PrismaClient) => {
+        return context.post.findMany({
+          where: { authorId: id },
+        });
+      },
+    },
+  }),
 });
 
 export const Users = new GraphQLList(User);
