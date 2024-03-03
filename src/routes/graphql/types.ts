@@ -59,9 +59,9 @@ export const Profile = new GraphQLObjectType({
       resolve: async (
         parent: Static<typeof profileSchema>,
         __,
-        context: PrismaClient,
+        context: { prisma: PrismaClient },
       ) => {
-        return context.memberType.findUnique({
+        return context.prisma.memberType.findUnique({
           where: { id: parent.memberTypeId },
         });
       },
@@ -79,7 +79,7 @@ export const User: GraphQLObjectType<
     userSubscribedTo?: Array<SubscribersOnAuthors>;
     subscribedToUser?: Array<SubscribersOnAuthors>;
   },
-  PrismaClient
+  { prisma: PrismaClient }
 > = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
@@ -88,24 +88,36 @@ export const User: GraphQLObjectType<
     balance: { type: new GraphQLNonNull(GraphQLFloat) },
     profile: {
       type: Profile,
-      resolve: async (parent: Static<typeof userSchema>, __, context: PrismaClient) => {
-        return context.profile.findUnique({
+      resolve: async (
+        parent: Static<typeof userSchema>,
+        __,
+        context: { prisma: PrismaClient },
+      ) => {
+        return context.prisma.profile.findUnique({
           where: { userId: parent.id },
         });
       },
     },
     posts: {
       type: Posts,
-      resolve: async (parent: Static<typeof userSchema>, __, context: PrismaClient) => {
-        return context.post.findMany({
+      resolve: async (
+        parent: Static<typeof userSchema>,
+        __,
+        context: { prisma: PrismaClient },
+      ) => {
+        return context.prisma.post.findMany({
           where: { authorId: parent.id },
         });
       },
     },
     userSubscribedTo: {
       type: new GraphQLList(User),
-      resolve: async (parent: Static<typeof userSchema>, __, context: PrismaClient) => {
-        return context.user.findMany({
+      resolve: async (
+        parent: Static<typeof userSchema>,
+        __,
+        context: { prisma: PrismaClient },
+      ) => {
+        return context.prisma.user.findMany({
           where: {
             subscribedToUser: {
               some: {
@@ -118,8 +130,12 @@ export const User: GraphQLObjectType<
     },
     subscribedToUser: {
       type: new GraphQLList(User),
-      resolve: async (parent: Static<typeof userSchema>, __, context: PrismaClient) => {
-        return context.user.findMany({
+      resolve: async (
+        parent: Static<typeof userSchema>,
+        __,
+        context: { prisma: PrismaClient },
+      ) => {
+        return context.prisma.user.findMany({
           where: {
             userSubscribedTo: {
               some: {
