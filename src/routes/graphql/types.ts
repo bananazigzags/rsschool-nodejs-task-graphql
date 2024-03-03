@@ -41,17 +41,6 @@ export const Post = new GraphQLObjectType({
 
 export const Posts = new GraphQLList(Post);
 
-export const User = new GraphQLObjectType({
-  name: 'User',
-  fields: {
-    id: { type: new GraphQLNonNull(UUIDType) },
-    name: { type: new GraphQLNonNull(GraphQLString) },
-    balance: { type: new GraphQLNonNull(GraphQLFloat) },
-  },
-});
-
-export const Users = new GraphQLList(User);
-
 export const Profile = new GraphQLObjectType({
   name: 'Profile',
   fields: {
@@ -64,3 +53,15 @@ export const Profile = new GraphQLObjectType({
 });
 
 export const Profiles = new GraphQLList(Profile);
+
+export const User = new GraphQLObjectType({
+  name: 'User',
+  fields: {
+    id: { type: new GraphQLNonNull(UUIDType) },
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
+    profile: { type: Profile },
+  },
+});
+
+export const Users = new GraphQLList(User);
