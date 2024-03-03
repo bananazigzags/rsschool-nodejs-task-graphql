@@ -1,7 +1,10 @@
-import { Type } from '@fastify/type-provider-typebox';
+import { Static, Type } from '@fastify/type-provider-typebox';
 import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { PrismaClient } from '@prisma/client';
 import {
+  CreatePostInput,
+  CreateProfileInput,
+  CreateUserInput,
   MemberIdType,
   MemberType,
   MemberTypes,
@@ -14,6 +17,9 @@ import {
 } from './types.js';
 import { MemberTypeId } from '../member-types/schemas.js';
 import { UUIDType } from './types/uuid.js';
+import { createUserSchema } from '../users/schemas.js';
+import { createPostSchema } from '../posts/schemas.js';
+import { createProfileSchema } from '../profiles/schemas.js';
 
 export const gqlResponseSchema = Type.Partial(
   Type.Object({
@@ -103,10 +109,46 @@ const rootQuery = new GraphQLObjectType({
 const rootMutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-    memberTypes: {
-      type: MemberTypes,
-      resolve: () => {
-        return [{}];
+    createUser: {
+      type: User,
+      args: { dto: { type: CreateUserInput } },
+      resolve: async (
+        _,
+        { dto }: { dto: Static<(typeof createUserSchema)['body']> },
+        context: PrismaClient,
+      ) => {
+        const createdUser = await context.user.create({
+          data: dto,
+        });
+        return createdUser;
+      },
+    },
+    createPost: {
+      type: Post,
+      args: { dto: { type: CreatePostInput } },
+      resolve: async (
+        _,
+        { dto }: { dto: Static<(typeof createPostSchema)['body']> },
+        context: PrismaClient,
+      ) => {
+        const createdUser = await context.post.create({
+          data: dto,
+        });
+        return createdUser;
+      },
+    },
+    createProfile: {
+      type: Post,
+      args: { dto: { type: CreateProfileInput } },
+      resolve: async (
+        _,
+        { dto }: { dto: Static<(typeof createProfileSchema)['body']> },
+        context: PrismaClient,
+      ) => {
+        const createdUser = await context.profile.create({
+          data: dto,
+        });
+        return createdUser;
       },
     },
   },
