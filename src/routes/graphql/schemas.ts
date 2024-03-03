@@ -1,7 +1,20 @@
 import { Type } from '@fastify/type-provider-typebox';
 import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { PrismaClient } from '@prisma/client';
-import { MemberTypes, Posts, Profiles, Users } from './types.js';
+import {
+  MemberIdType,
+  MemberType,
+  MemberTypes,
+  Post,
+  Posts,
+  Profile,
+  Profiles,
+  User,
+  Users,
+} from './types.js';
+import { MemberTypeId } from '../member-types/schemas.js';
+import { UUID } from 'crypto';
+import { UUIDType } from './types/uuid.js';
 
 export const gqlResponseSchema = Type.Partial(
   Type.Object({
@@ -31,22 +44,58 @@ const rootQuery = new GraphQLObjectType({
         return context.memberType.findMany();
       },
     },
+    memberType: {
+      type: MemberType,
+      args: { id: { type: MemberIdType } },
+      resolve: async (_, { id }: { id: MemberTypeId }, context: PrismaClient) => {
+        return context.memberType.findUnique({
+          where: { id },
+        });
+      },
+    },
     posts: {
       type: Posts,
-      resolve: async (_, __, context) => {
+      resolve: async (_, __, context: PrismaClient) => {
         return context.post.findMany();
+      },
+    },
+    post: {
+      type: Post,
+      args: { id: { type: UUIDType } },
+      resolve: async (_, { id }: { id: UUID }, context: PrismaClient) => {
+        return context.post.findUnique({
+          where: { id },
+        });
       },
     },
     users: {
       type: Users,
-      resolve: async (_, __, context) => {
+      resolve: async (_, __, context: PrismaClient) => {
         return context.user.findMany();
+      },
+    },
+    user: {
+      type: User,
+      args: { id: { type: UUIDType } },
+      resolve: async (_, { id }: { id: UUID }, context: PrismaClient) => {
+        return context.user.findUnique({
+          where: { id },
+        });
       },
     },
     profiles: {
       type: Profiles,
-      resolve: async (_, __, context) => {
+      resolve: async (_, __, context: PrismaClient) => {
         return context.profile.findMany();
+      },
+    },
+    profile: {
+      type: Profile,
+      args: { id: { type: UUIDType } },
+      resolve: async (_, { id }: { id: UUID }, context: PrismaClient) => {
+        return context.profile.findUnique({
+          where: { id },
+        });
       },
     },
   },

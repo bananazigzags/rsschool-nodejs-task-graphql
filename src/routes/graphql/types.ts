@@ -10,18 +10,18 @@ import {
 } from 'graphql';
 import { UUIDType } from './types/uuid.js';
 
+export const MemberIdType = new GraphQLEnumType({
+  name: 'MemberTypeId',
+  values: {
+    basic: { value: 'basic' },
+    business: { value: 'business' },
+  },
+});
+
 export const MemberType = new GraphQLObjectType({
   name: 'MemberType',
   fields: {
-    id: {
-      type: new GraphQLEnumType({
-        name: 'MemberTypeId',
-        values: {
-          BASIC: { value: 'basic' },
-          BUSINESS: { value: 'business' },
-        },
-      }),
-    },
+    id: { type: MemberIdType },
     discount: { type: GraphQLFloat },
     postsLimitPerMonth: { type: GraphQLInt },
   },
